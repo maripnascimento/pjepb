@@ -18,11 +18,11 @@ def get_lawsuit(cnj_number):
 	'general':response_general.json(),
 	'activity':responde_activity.json()
 	}
-	print(data['activity'])
-	import pdb; pdb.set_trace()
+	
 	lawsuit = parser(data)
 
 	return lawsuit 
+
 def cnj_cleaner(cnj_number):
 	
 	return cnj_number.replace('-','').replace('.','') 
@@ -32,6 +32,7 @@ def parser(data):
 
 	general = data['general']
 	activity = data['activity']
+	#serao os parametros da funcao no parser
 
 	lawsuit = {
 	'number': general['numeroProcesso'],
@@ -42,9 +43,25 @@ def parser(data):
 	'value': general['valorAcao'],
 	'status':  general['status']['descricao'],
 	'justice_secret':general['sigiloso'],
-	'related_people':[general['poloAtivo']['nomeParte'],general['poloPassivo']['nomeParte']]
+	'related_people':[general['poloAtivo']['nomeParte'],general['poloPassivo']['nomeParte']],
+	'activity': get_activity(activity)
 	}
 
+	return lawsuit 
+
+def get_activity(data):
+	print('extraindo os andamentos do processo')
+
+	#import pdb; pdb.set_trace()
+	activity_list = []
+	for activity in data:
+		moviment = {
+		'date':activity['dataMovimentacao'],
+		'text':activity['tipoMovimento']['descricao']
+		}
+		activity_list.append(moviment)
+	
+	return activity_list
 
 
 print(get_lawsuit('0820115-36.2017.8.15.2001'))
